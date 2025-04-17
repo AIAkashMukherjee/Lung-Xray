@@ -15,4 +15,12 @@ tox
 black
 flake8
 mypy
+dotenv
+boto
+uvicorn
+jinja2
+botocore
+certifi
+pymongo
+gridfs
 -e .
