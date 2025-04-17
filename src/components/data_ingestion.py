@@ -36,14 +36,27 @@ class DataIngestion:
         """
         Save images to the given directory with subfolders by label.
         """
+        # try:
+        #     for idx, (image_bytes, label) in enumerate(image_tuples):
+        #         label_dir = os.path.join(save_dir, label)
+        #         os.makedirs(label_dir, exist_ok=True)
+        #         image = Image.open(BytesIO(image_bytes)).convert("RGB")
+        #         image_path = os.path.join(label_dir, f"{label}_{idx}.jpg")
+        #         image.save(image_path)
+        #     logging.info(f"Saved {len(image_tuples)} images to {save_dir}")
+        # except Exception as e:
+        #     raise CustomException(e, sys)
         try:
             for idx, (image_bytes, label) in enumerate(image_tuples):
-                label_dir = os.path.join(save_dir, label)
+                label_dir = os.path.join(save_dir, label)  # Ensure class labels are used
                 os.makedirs(label_dir, exist_ok=True)
+            
                 image = Image.open(BytesIO(image_bytes)).convert("RGB")
                 image_path = os.path.join(label_dir, f"{label}_{idx}.jpg")
                 image.save(image_path)
+
             logging.info(f"Saved {len(image_tuples)} images to {save_dir}")
+
         except Exception as e:
             raise CustomException(e, sys)
 
@@ -56,8 +69,8 @@ class DataIngestion:
             )
             logging.info("Performed train/test split.")
 
-            self.save_images(train_data, self.config.training_image_dir)
-            self.save_images(test_data, self.config.validation_image_dir)
+            self.save_images(train_data, self.config.train_data_path)
+            self.save_images(test_data, self.config.val_data_path)
 
         except Exception as e:
             raise CustomException(e, sys)
@@ -68,8 +81,8 @@ class DataIngestion:
             self.split_data_train_test(image_data)
 
             data_ingestion_artifact = DataIngestionArtifact(
-                trained_file_path=self.config.training_image_dir,
-                validation_file_path=self.config.validation_image_dir
+                trained_file_path=self.config.train_data_path,
+                validation_file_path=self.config.val_data_path
             )
 
             logging.info(f"Data ingestion artifact: {data_ingestion_artifact}")

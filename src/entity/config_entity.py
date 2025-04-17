@@ -1,5 +1,7 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Tuple
+
 
 from torch import device
 
@@ -11,24 +13,55 @@ class DataIngestionConfig:
     def __init__(self):
         self.collection_name = collection_name
         self.train_test_split_ratio = DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO
-        self.training_image_dir = training_image_dir
-        self.validation_image_dir = validation_image_dir
+        # self.training_image_dir = training_image_dir
+        # self.validation_image_dir = validation_image_dir
         
-        self.artifact_dir: str = os.path.join(ARTIFACT_DIR, TIMESTAMP)
+        self.artifact_dir: str = os.path.join(ARTIFACT_DIR, TIMESTAMP,"data_ingestion")
 
-        self.data_path: str = os.path.join(self.artifact_dir, "data_ingestion")
+        # self.data_path: str = os.path.join(self.artifact_dir, "data_ingestion")
 
-        self.train_data_path: str = os.path.join(self.data_path, "train")
+        self.train_data_path: str = os.path.join(self.artifact_dir, "train")
 
-        self.val_data_path: str = os.path.join(self.data_path, "validation")
+        self.val_data_path: str = os.path.join(self.artifact_dir, "validation")
 
-        # self.data_path: str = os.path.join(
-        #     self.artifact_dir, "data_ingestion", self.s3_data_folder
-        # )
+@dataclass
+class DataTransformationConfig:
+    def __init__(self):
+        self.color_jitter_transforms: dict = {
+            "brightness": BRIGHTNESS,
+            "contrast": CONTRAST,
+            "saturation": SATURATION,
+            "hue": HUE,
+        }
 
-        # self.train_data_path: str = os.path.join(self.data_path, "train")
+        self.RESIZE: int = IMAGE_SHAPE
+        # self.RESIZE: Tuple[int, int] = field(default_factory=lambda: IMAGE_SHAPE[:2])
 
-        # self.test_data_path: str = os.path.join(self.data_path, "test")
+        self.CENTERCROP: int = CENTERCROP
 
-        # train_test_split_ratio: float = DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO
-        # collection_name:str = DATABASE_NAME
+        self.RANDOMROTATION: int = RANDOMROTATION
+
+        self.normalize_transforms: dict = {
+            "mean": NORMALIZE_LIST_1,
+            "std": NORMALIZE_LIST_2,
+        }
+
+        self.data_loader_params: dict = {
+            "batch_size": BATCH_SIZE,
+            "shuffle": SHUFFLE,
+            "pin_memory": PIN_MEMORY,
+        }
+
+        self.artifact_dir: str = os.path.join(
+            ARTIFACT_DIR, TIMESTAMP, "data_transformation"
+        )
+
+        self.train_transforms_file: str = os.path.join(
+            self.artifact_dir, TRAIN_TRANSFORMS_FILE
+        )
+
+        self.val_transforms_file: str = os.path.join(
+            self.artifact_dir, VAL_TRANSFORMS_FILE
+        )
+
+       

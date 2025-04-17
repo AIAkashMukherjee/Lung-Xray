@@ -27,19 +27,20 @@ CLASS_LABEL_1: str = "NORMAL"
 
 CLASS_LABEL_2: str = "PNEUMONIA"
 
-BRIGHTNESS: int = 0.10
+BRIGHTNESS: int = 0.18
 
-CONTRAST: int = 0.1
+CONTRAST: int = 0.15
 
-SATURATION: int = 0.10
+SATURATION: int = 0.25
 
 HUE: int = 0.1
 
-RESIZE: int = 224
+# IMAGE_SHAPE:tuple = (600, 600, 3)
+IMAGE_SHAPE = 600
 
-CENTERCROP: int = 224
+CENTERCROP: int = 600
 
-RANDOMROTATION: int = 10
+RANDOMROTATION: int = 15
 
 NORMALIZE_LIST_1: List[int] = [0.485, 0.456, 0.406]
 
@@ -49,7 +50,7 @@ TRAIN_TRANSFORMS_KEY: str = "xray_train_transforms"
 
 TRAIN_TRANSFORMS_FILE: str = "train_transforms.pkl"
 
-TEST_TRANSFORMS_FILE: str = "test_transforms.pkl"
+VAL_TRANSFORMS_FILE: str = "validation_transforms.pkl"
 
 BATCH_SIZE: int = 2
 
