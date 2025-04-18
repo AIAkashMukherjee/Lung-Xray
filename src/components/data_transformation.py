@@ -1,6 +1,8 @@
 import os
 import sys
 from typing import Tuple
+from torch.utils.data import WeightedRandomSampler
+from collections import Counter
 import joblib
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
@@ -94,12 +96,41 @@ class DataTransformation:
 
             logging.info("Created train data and test data paths")
 
+            # Get the class labels of each image
+            targets = [sample[1] for sample in train_data.samples]
+            class_counts = Counter(targets)
+
+        # Log class distribution
+            logging.info(f"Class Distribution in Training Set: {class_counts}")
+
+        # Compute class weights and sample weights
+            class_weights = {cls: 1.0 / count for cls, count in class_counts.items()}
+            sample_weights = [class_weights[label] for label in targets]
+
+        # Create Weighted Sampler
+            sampler = WeightedRandomSampler(
+            weights=sample_weights,
+            num_samples=len(sample_weights),
+            replacement=True
+            )
+
+
             train_loader: DataLoader = DataLoader(
-                train_data, **self.data_transform_config.data_loader_params
+                train_data, 
+                sampler=sampler,
+                # **self.data_transform_config.data_loader_params,sampler=sampler,
+                batch_size=self.data_transform_config.data_loader_params["batch_size"],
+                pin_memory=self.data_transform_config.data_loader_params["pin_memory"],
+                num_workers=0
             )
 
             val_loader: DataLoader = DataLoader(
-                val_data, **self.data_transform_config.data_loader_params
+                val_data, 
+                shuffle=False,
+                batch_size=self.data_transform_config.data_loader_params["batch_size"],
+                pin_memory=self.data_transform_config.data_loader_params["pin_memory"],
+                num_workers=0
+    
             )
 
             logging.info("Exited the data_loader method of Data transformation class")

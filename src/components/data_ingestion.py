@@ -26,9 +26,21 @@ class DataIngestion:
         """
         try:
             image_data = Image_Data()
+            # images = image_data.fetch_images_as_bytes(self.config.collection_name)
+            # logging.info(f"Downloaded {len(images)} images from MongoDB.")
+            # return images
             images = image_data.fetch_images_as_bytes(self.config.collection_name)
-            logging.info(f"Downloaded {len(images)} images from MongoDB.")
-            return images
+            labeled_images = []
+
+            # Assume that label is embedded in the metadata or filename
+            for image_bytes, label in images:
+                # Extract the label from metadata or filename, assuming label is present in metadata
+                # For this case, we assume labels are fetched from image metadata or filename
+                label = 'NORMAL' if 'NORMAL' in label else 'PNEUMONIA'
+                labeled_images.append((image_bytes, label))
+                
+            logging.info(f"Downloaded {len(labeled_images)} images from MongoDB.")
+            return labeled_images
         except Exception as e:
             raise CustomException(e, sys)
         
@@ -46,17 +58,37 @@ class DataIngestion:
         #     logging.info(f"Saved {len(image_tuples)} images to {save_dir}")
         # except Exception as e:
         #     raise CustomException(e, sys)
+        # try:
+        #     for idx, (image_bytes, label) in enumerate(image_tuples):
+        #         label_dir = os.path.join(save_dir, label)  # Ensure class labels are used
+        #         os.makedirs(label_dir, exist_ok=True)
+            
+        #         image = Image.open(BytesIO(image_bytes)).convert("RGB")
+        #         image_path = os.path.join(label_dir, f"{label}_{idx}.jpg")
+        #         image.save(image_path)
+
+        #     logging.info(f"Saved {len(image_tuples)} images to {save_dir}")
+
+        # except Exception as e:
+        #     raise CustomException(e, sys)
+
         try:
             for idx, (image_bytes, label) in enumerate(image_tuples):
-                label_dir = os.path.join(save_dir, label)  # Ensure class labels are used
-                os.makedirs(label_dir, exist_ok=True)
+            # Ensure that the label is correct (e.g., 'NORMAL' or 'PNEUMONIA')
+            # If the label is not correct, log it or assign a default class
+                if label not in ["NORMAL", "PNEUMONIA"]:
+                    logging.warning(f"Unexpected label: {label}")
+                    label = "UNKNOWN"  # Default class if label is not valid
             
+                label_dir = os.path.join(save_dir, label)  # Class subfolder
+                os.makedirs(label_dir, exist_ok=True)  # Create class subfolder if it doesn't exist
+
+            # Save the image to the corresponding class folder
                 image = Image.open(BytesIO(image_bytes)).convert("RGB")
                 image_path = os.path.join(label_dir, f"{label}_{idx}.jpg")
                 image.save(image_path)
 
             logging.info(f"Saved {len(image_tuples)} images to {save_dir}")
-
         except Exception as e:
             raise CustomException(e, sys)
 

@@ -65,3 +65,40 @@ class DataTransformationConfig:
         )
 
        
+@dataclass
+class ModelTrainerConfig:
+    def __init__(self):
+        self.artifact_dir: int = os.path.join(ARTIFACT_DIR, TIMESTAMP, "model_training")
+
+        self.trained_bentoml_model_name: str = "xray_model"
+
+        self.trained_model_path: int = os.path.join(
+            self.artifact_dir, TRAINED_MODEL_NAME
+        )
+
+        self.train_transforms_key: str = TRAIN_TRANSFORMS_KEY
+
+        self.epochs: int = EPOCH
+
+        self.optimizer_params: dict = {"lr": 0.0001,"weight_decay": 1e-4}
+
+        self.scheduler_params: dict = {"step_size": STEP_SIZE, "gamma": GAMMA}
+
+        self.device: device = DEVICE
+
+        
+               
+@dataclass
+class ModelEvaluationConfig:
+    def __init__(self):
+        self.device: device = DEVICE
+
+        self.validation_loss: int = 0
+
+        self.validation_accuracy: int = 0
+
+        self.total: int = 0
+
+        self.total_batch: int = 0
+
+        self.optimizer_params: dict = {"lr": 0.0001,"weight_decay": 1e-4}                

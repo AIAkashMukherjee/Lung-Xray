@@ -1,11 +1,9 @@
 from dotenv import load_dotenv
 from typing import List
 from datetime import datetime
-import os
+import os,torch
 load_dotenv()
 uri = os.getenv('MONGODB_URI')
-
-
 
 
 AWS_BUCKET_NAME='lung-xray-yt'
@@ -14,8 +12,8 @@ db_name='akash'
 DATABASE_NAME='lung_xray_db'
 DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO=.20
 collection_name="fs.files"
-training_image_dir="artifacts/data/train"
-validation_image_dir="artifacts/data/validation"
+# training_image_dir="artifacts/data/train"
+# validation_image_dir="artifacts/data/validation"
 TIMESTAMP: datetime = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
 
 # Data Ingestion Constants
@@ -52,9 +50,32 @@ TRAIN_TRANSFORMS_FILE: str = "train_transforms.pkl"
 
 VAL_TRANSFORMS_FILE: str = "validation_transforms.pkl"
 
-BATCH_SIZE: int = 2
+BATCH_SIZE: int = 32
 
-SHUFFLE: bool = False
+SHUFFLE: bool = True
 
 PIN_MEMORY: bool = True
 
+
+
+
+
+RAINED_MODEL_DIR: str = "trained_model"
+
+TRAINED_MODEL_NAME: str = "model.pt"
+
+DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+STEP_SIZE: int = 6
+
+GAMMA: int = 0.5
+
+EPOCH: int = 4
+
+BENTOML_MODEL_NAME: str = "xray_model"
+
+BENTOML_SERVICE_NAME: str = "xray_service"
+
+BENTOML_ECR_URI: str = "xray_bento_image"
+
+PREDICTION_LABEL: dict = {"0": CLASS_LABEL_1, 1: CLASS_LABEL_2}

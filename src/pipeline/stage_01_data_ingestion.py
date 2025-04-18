@@ -76,13 +76,4 @@ class DataIngestionPipe:
             return data_ingestion_artifact
         except Exception as e:
             raise CustomException(e,sys)
-
-if __name__ == '__main__':
-    try:
-
-        obj = DataIngestionPipe()
-        obj.main()
-
-    except Exception as e:
-        logger.exception(e)
-        raise e     
+   
