@@ -22,16 +22,3 @@ class ModelTrainerPipe:
             return model_trainer_artifact
         except Exception as e:
             raise CustomException(e,sys)
-
-# if __name__ == '__main__':
-#     try:
-
-#         ingestion_obj = DataIngestionPipe()  
-#         data_ingestion_artifact = ingestion_obj.main() 
-
-#         obj = DataTransfromPipe(data_ingestion_artifact=data_ingestion_artifact)
-#         obj.main()
-
-#     except Exception as e:
-#         logger.exception(e)
-#         raise e

@@ -80,7 +80,7 @@ class ModelTrainerConfig:
 
         self.epochs: int = EPOCH
 
-        self.optimizer_params: dict = {"lr": 0.0001,"weight_decay": 1e-4}
+        self.optimizer_params: dict = {"lr": 0.0001,"weight_decay": 5e-4}
 
         self.scheduler_params: dict = {"step_size": STEP_SIZE, "gamma": GAMMA}
 
@@ -101,4 +101,6 @@ class ModelEvaluationConfig:
 
         self.total_batch: int = 0
 
-        self.optimizer_params: dict = {"lr": 0.0001,"weight_decay": 1e-4}                
+        self.optimizer_params: dict = {"lr": 0.0001,"weight_decay": 5e-4}                
+
+

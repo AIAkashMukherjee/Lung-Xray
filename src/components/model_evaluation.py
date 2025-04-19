@@ -14,7 +14,8 @@ from src.entity.artifact_entity import (
 from src.entity.config_entity import ModelEvaluationConfig
 from src.exception.expection import CustomException
 from src.logger.custom_logging import logging
-from src.model.arch import EfficientNetB7
+from src.constants import *
+from src.model.arch import EfficientNetV2S
 
 
 class ModelEvaluation:
@@ -39,24 +40,24 @@ class ModelEvaluation:
                 self.data_transformation_artifact.transformed_val_object
             )
 
-            model: Module = EfficientNetB7()
+            model: Module = EfficientNetV2S()
 
-            model: Module = torch.load(self.model_trainer_artifact.trained_model_path)
+            model.load_state_dict(torch.load(self.model_trainer_artifact.trained_model_path,map_location=self.model_evaluation_config.device))
 
             model.to(self.model_evaluation_config.device)
 
-            normal_count = 28   # Class 0: NORMAL
-            pneumonia_count = 140  # Class 1: PNEUMONIA
+        #     normal_count = 28   # Class 0: NORMAL
+        #     pneumonia_count = 140  # Class 1: PNEUMONIA
 
-        # Compute pos_weight = negative / positive
-            pos_weight_value = normal_count / pneumonia_count
-            pos_weight = torch.tensor([pos_weight_value]).to(self.model_evaluation_config.device)
+        # # Compute pos_weight = negative / positive
+        #     pos_weight_value = normal_count / pneumonia_count
+        #     pos_weight = torch.tensor([pos_weight_value]).to(self.model_evaluation_config.device)
 
         # Binary classification loss with class imbalance
-            cost: torch.nn.Module = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+            # cost: torch.nn.Module = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
 
-            # cost: Module = CrossEntropyLoss()
+            cost: Module = CrossEntropyLoss()
 
             
 

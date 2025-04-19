@@ -23,4 +23,6 @@ botocore
 certifi
 pymongo
 gridfs
+mypy-boto3-s3
+streamlit
 -e .

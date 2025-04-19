@@ -18,7 +18,7 @@ from src.entity.artifact_entity import (
 from src.entity.config_entity import ModelTrainerConfig
 from src.exception.expection import CustomException
 from src.logger.custom_logging import logging
-from src.model.arch import EfficientNetB7
+from src.model.arch import EfficientNetV2S
 
 
 class ModelTrainer:
@@ -27,7 +27,7 @@ class ModelTrainer:
 
         self.data_transformation_artifact: DataTransformationArtifact = data_transformation_artifact
 
-        self.model: Module = EfficientNetB7(num_classes=2)
+        self.model: Module = EfficientNetV2S(num_classes=2)
 
     def train(self,optimizer:Optimizer):
         logging.info("Entered the train method of Model trainer class")
@@ -79,7 +79,7 @@ class ModelTrainer:
         
             self.model.eval()
 
-            test_loss: float = 0.0
+            val_loss: float = 0.0
 
             correct: int = 0
 
@@ -89,23 +89,23 @@ class ModelTrainer:
 
                     output = self.model(data)
 
-                    test_loss += F.nll_loss(output, target, reduction="sum").item()
+                    val_loss += F.nll_loss(output, target, reduction="sum").item()
 
                     pred = output.argmax(dim=1, keepdim=True)
 
                     correct += pred.eq(target.view_as(pred)).sum().item()
 
-                    est_loss /= len(
+                    val_loss /= len(
                     self.data_transformation_artifact.transformed_val_object.dataset
                 )
 
-                print( "Validation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n".format(test_loss,correct,
+                print( "Validation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n".format(val_loss,correct,
                         len(self.data_transformation_artifact.transformed_val_object.dataset),
                         100.0 * correct/ len(self.data_transformation_artifact.transformed_val_object.dataset),
                     )
                 )
 
-            logging.info("Validation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)".format(test_loss,correct,len(self.data_transformation_artifact.transformed_val_object.dataset),
+            logging.info("Validation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)".format(val_loss,correct,len(self.data_transformation_artifact.transformed_val_object.dataset),
                     100.0* correct/ len(self.data_transformation_artifact.transformed_val_object.dataset),))
 
             logging.info("Exited the Validation method of Model trainer class")
@@ -140,7 +140,7 @@ class ModelTrainer:
 
             os.makedirs(self.model_trainer_config.artifact_dir, exist_ok=True)
 
-            torch.save(model, self.model_trainer_config.trained_model_path)
+            torch.save(model.state_dict(), self.model_trainer_config.trained_model_path)
 
             train_transforms_obj = joblib.load(
                 self.data_transformation_artifact.train_transform_file_path
